@@ -65,6 +65,7 @@ def encoded_data(csv_reader):
 
 
 def Knn(features, labels):
+    
     model = KNeighborsClassifier(n_neighbors=71)
 
     # Train the model using the training sets
