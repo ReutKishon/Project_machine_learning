@@ -12,7 +12,7 @@ def read_data_from_file():
     """
 
     # skip first line i.e. read header first and then iterate over each row od csv as a list
-    with open('test.csv', 'r') as read_obj:
+    with open('healthcare-dataset-stroke-data.csv', 'r') as read_obj:
         csv_reader = reader(read_obj)
         header = next(csv_reader)
         # Check file as empty
@@ -78,7 +78,7 @@ def encoded_data(csv_reader):
 
 def Knn(X_train, y_train, X_test):
 
-    model = KNeighborsClassifier(n_neighbors=3)
+    model = KNeighborsClassifier(n_neighbors=71)
 
     # Train the model using the training sets
     model.fit(X_train, y_train)
