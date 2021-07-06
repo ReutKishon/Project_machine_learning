@@ -43,9 +43,8 @@ def encoded_data(csv_reader):
     age = []
     ever_married = []
     work_type = []
-    Residence_type = []
+    residence_type = []
     smoking_status = []
-    hypertension = []
     heart_disease = []
     avg_glucose_level = []
     bmi = []
@@ -59,7 +58,7 @@ def encoded_data(csv_reader):
         heart_disease.append(int(row[4]))
         ever_married.append(row[5])
         work_type.append(row[6])
-        Residence_type.append(row[7])
+        residence_type.append(row[7])
         avg_glucose_level.append(float(row[8]))
         bmi.append(-1) if (row[9] == 'N/A') else bmi.append(float(row[9]))
         smoking_status.append(row[10])
@@ -72,7 +71,7 @@ def encoded_data(csv_reader):
     gender_encoded = le.fit_transform(gender)
     married_encoded = le.fit_transform(ever_married)
     work_type_encoded = le.fit_transform(work_type)
-    residence_type_encoded = le.fit_transform(Residence_type)
+    residence_type_encoded = le.fit_transform(residence_type)
     smoking_status_encoded = le.fit_transform(smoking_status)
 
     features = list(zip(gender_encoded, age, heart_disease, married_encoded, work_type_encoded,
@@ -80,24 +79,31 @@ def encoded_data(csv_reader):
     return features, labels
 
 
-def Knn(X_train, y_train, X_test):
+def knn(x_train, y_train, x_test, n_neighbors=71):
 
-    model = KNeighborsClassifier(n_neighbors=71)
+    model = KNeighborsClassifier(n_neighbors=n_neighbors)
 
     # Train the model using the training sets
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
 
-    return model.predict(X_test)
+    return model.predict(x_test)
 
 
 # def check_accuracy():
 if __name__ == "__main__":
+    avgs_dict = {}
     features, labels = read_data_from_file()
-    X_train, X_test, y_train, y_test = split_data(features, labels)
-
-    y_pred = Knn(X_train, y_train, X_test)
-
-    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
+    splits_num = 100
+    for _ in range (splits_num):
+        X_train, X_test, y_train, y_test = split_data(features, labels)
+        for i in range(1, 73):
+            y_pred = knn(X_train, y_train, X_test, i)
+            acc_score = metrics.accuracy_score(y_test, y_pred)
+            print(f"Accuracy for {i} neighbours:", acc_score)
+            avgs_dict[i] = avgs_dict.get(i, 0) + acc_score
+    max_key = max(avgs_dict, key=avgs_dict.get)
+    max_val = max(avgs_dict.values())
+    print(f"best accuracy is for {max_key} neighbours: {max_val/splits_num}")
 
 
 # Challenges: five of the dataset fields are strings.
