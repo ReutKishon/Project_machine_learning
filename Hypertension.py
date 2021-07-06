@@ -1,7 +1,8 @@
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn import metrics
-from utils import *
+from sklearn.naive_bayes import GaussianNB, CategoricalNB, MultinomialNB
+from utils import DataHolder
 
 
 
@@ -28,18 +29,40 @@ def knn(x_train, y_train, x_test, n_neighbors=71):
 
 def check_knn(dh, label):
     avgs_dict = {}
-    features = dh.get_features(label)
-    labels = dh.get_labels(label)
+    features, labels = get_features_labels(dh, label)
     splits_num = 100
     for _ in range(splits_num):
-        X_train, X_test, y_train, y_test = split_data(features, labels)
+        x_train, x_test, y_train, y_test = split_data(features, labels)
         for i in range(1, 73):
-            y_pred = knn(X_train, y_train, X_test, i)
+            y_pred = knn(x_train, y_train, x_test, i)
             acc_score = metrics.accuracy_score(y_test, y_pred)
             avgs_dict [ i ] = avgs_dict.get(i, 0) + acc_score
     max_key = max(avgs_dict, key=avgs_dict.get)
     max_val = max(avgs_dict.values())
     print(f"best accuracy for {label} is for {max_key} neighbours: {max_val / splits_num}")
+
+def check_naive_bayes(dh, label):
+    totals = {"gaussian":0, "categorial":0, "multinomial":0}
+    features, labels = get_features_labels(dh, label)
+    splits_num = 100
+    for _ in range(splits_num):
+        x_train, x_test, y_train, y_test = split_data(features, labels)
+        gnb = GaussianNB()
+        y_pred = gnb.fit(x_train, y_train).predict(x_test)
+        acc_score = metrics.accuracy_score(y_test, y_pred)
+        totals["gaussian"] += acc_score
+        clf = MultinomialNB()
+        y_pred = clf.fit(x_train, y_train).predict(x_test)
+        acc_score = metrics.accuracy_score(y_test, y_pred)
+        totals ["multinomial"] += acc_score
+    max_key = max(totals, key=totals.get)
+    max_val = max(totals.values())
+    print(f"avg naive bayes accuracy for {label} is {max_key} : {max_val / splits_num}")
+
+def get_features_labels(dh, label):
+    features = dh.get_features(label)
+    labels = dh.get_labels(label)
+    return features, labels
 
 
 # def check_accuracy():
@@ -48,6 +71,7 @@ if __name__ == "__main__":
     dh = DataHolder()
     for label in ["hypertension", "heart_disease","stroke"]:
         check_knn(dh, label)
+        check_naive_bayes(dh, label)
 
 # Challenges: five of the dataset fields are strings.
 # In order to implemement knn algorithm we need to calculate Euclidian distance
