@@ -8,7 +8,8 @@ from csv import reader
 def read_data_from_file():
     """
     read data from healthcare-dataset-stroke-data csv file
-    :return: listof tuples (features)
+    :return: 1) listof lists (features) (after encoding the categorical fields)
+             2) list of integers (labels of samples)
     """
 
     # skip first line i.e. read header first and then iterate over each row od csv as a list
@@ -23,17 +24,21 @@ def read_data_from_file():
 def split_data(data, labels):
     """
     Split dataset into training set and test set
-    :param data: pandas data frame contains the data
-    :return: train set, test set data frames
+    :param data: pandas data frame contains the data and it's labels columns
+    :return: train set, test set , labels of training and test sets data frames
     """
     return train_test_split(data, labels, test_size=0.5)
 
 
 def encoded_data(csv_reader):
     """
-     data from healthcare-dataset-stroke-data csv file
-    :return: DictReader object
-    """
+    label encoding - represents categorical columns in a numerical column (map each value to a number),
+    using Label Encoder in sklearn.
+    :param data: A reader object which will iterate over lines in the given csvfile.
+    :return: 1) list of lists s.t each cell(list) represents sample from the csvfile.
+             2) list of integers represents the labels of each sample 
+                (the label is 1 if the patient has hypertension , 0 otherwise)
+    """         
     gender = []
     age = []
     ever_married = []
@@ -51,7 +56,6 @@ def encoded_data(csv_reader):
 
         gender.append(row[1])
         age.append(float(row[2]))
-        # hypertension.append(int(row[3]))
         heart_disease.append(int(row[4]))
         ever_married.append(row[5])
         work_type.append(row[6])
