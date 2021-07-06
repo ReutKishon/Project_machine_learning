@@ -12,7 +12,7 @@ def read_data_from_file():
     """
 
     # skip first line i.e. read header first and then iterate over each row od csv as a list
-    with open('healthcare-dataset-stroke-data.csv', 'r') as read_obj:
+    with open('test.csv', 'r') as read_obj:
         csv_reader = reader(read_obj)
         header = next(csv_reader)
         # Check file as empty
@@ -51,7 +51,7 @@ def encoded_data(csv_reader):
 
         gender.append(row[1])
         age.append(float(row[2]))
-        hypertension.append(int(row[3]))
+        # hypertension.append(int(row[3]))
         heart_disease.append(int(row[4]))
         ever_married.append(row[5])
         work_type.append(row[6])
@@ -59,7 +59,7 @@ def encoded_data(csv_reader):
         avg_glucose_level.append(float(row[8]))
         bmi.append(-1) if (row[9] == 'N/A') else bmi.append(float(row[9]))
         smoking_status.append(row[10])
-        labels.append(int(row[11]))
+        labels.append(int(row[3]))
 
     # creating labelEncoder
     le = preprocessing.LabelEncoder()
@@ -71,14 +71,14 @@ def encoded_data(csv_reader):
     residence_type_encoded = le.fit_transform(Residence_type)
     smoking_status_encoded = le.fit_transform(smoking_status)
 
-    features = list(zip(gender_encoded, age, hypertension, heart_disease, married_encoded, work_type_encoded,
+    features = list(zip(gender_encoded, age, heart_disease, married_encoded, work_type_encoded,
                     residence_type_encoded, avg_glucose_level, bmi, smoking_status_encoded))
     return features, labels
 
 
 def Knn(X_train, y_train, X_test):
 
-    model = KNeighborsClassifier(n_neighbors=71)
+    model = KNeighborsClassifier(n_neighbors=3)
 
     # Train the model using the training sets
     model.fit(X_train, y_train)
