@@ -1,5 +1,7 @@
 from sklearn import preprocessing
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
 from csv import reader
 
 
@@ -16,6 +18,15 @@ def read_data_from_file():
         # Check file as empty
         if header != None:
             return encoded_data(csv_reader)
+
+
+def split_data(data, labels):
+    """
+    Split dataset into training set and test set
+    :param data: pandas data frame contains the data
+    :return: train set, test set data frames
+    """
+    return train_test_split(data, labels, test_size=0.5)
 
 
 def encoded_data(csv_reader):
@@ -35,6 +46,7 @@ def encoded_data(csv_reader):
     bmi = []
     labels = []
 
+    # appending data to lists respectively
     for row in csv_reader:
 
         gender.append(row[1])
@@ -64,22 +76,24 @@ def encoded_data(csv_reader):
     return features, labels
 
 
-def Knn(features, labels):
-    
+def Knn(X_train, y_train, X_test):
+
     model = KNeighborsClassifier(n_neighbors=71)
 
     # Train the model using the training sets
-    model.fit(features, labels)
+    model.fit(X_train, y_train)
 
-    # Predict Output    /// stopped here
-    predicted = model.predict(
-        (0, 39, 0, 0, 1, 0, 1, 75.80, 22))  # 0:Overcast, 2:Mild
-    print(predicted)
+    return model.predict(X_test)
 
 
+# def check_accuracy():
 if __name__ == "__main__":
     features, labels = read_data_from_file()
-    Knn(features, labels)
+    X_train, X_test, y_train, y_test = split_data(features, labels)
+
+    y_pred = Knn(X_train, y_train, X_test)
+
+    print("Accuracy:", metrics.accuracy_score(y_test, y_pred))
 
 
 # Challenges: five of the dataset fields are strings.
