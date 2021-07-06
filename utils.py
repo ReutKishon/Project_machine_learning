@@ -40,13 +40,7 @@ class DataHolder(metaclass=Singleton):
         return self.df.loc[:, name]
 
     def get_features(self, label_name):
-        l = []
-        tmp_df = self.df.loc [ :, self.df.columns != label_name ]
-        for col in tmp_df.columns:
-            l.append(tmp_df[col].to_numpy().tolist())
-
-
-        return tmp_df
+        return self.df.loc [ :, self.df.columns != label_name ]
 
 
 
