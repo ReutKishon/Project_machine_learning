@@ -8,8 +8,7 @@ from sklearn_pandas import DataFrameMapper
 def read_data_from_file():
     """
     read data from healthcare-dataset-stroke-data csv file
-    :return: 1) listof lists (features) (after encoding the categorical fields)
-             2) list of integers (labels of samples)
+    :return: DataFrame of the data after transformation
     """
 
     # skip first line i.e. read header first and then iterate over each row od csv as a list
@@ -22,8 +21,6 @@ def read_data_from_file():
     return df
 
 
-
-    # creating labelEncoder
 class Singleton(type):
     _instances = {}
     def __call__(cls, *args, **kwargs):
