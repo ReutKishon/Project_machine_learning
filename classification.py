@@ -1,44 +1,37 @@
-from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB, CategoricalNB, MultinomialNB
 from sklearn import metrics
-from utils import DataHolder
-import pandas as pd
+from utils import *
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 
-
-def split_data(data, labels):
-    """
-    Split dataset into training set and test set
-    :param data: pandas data frame contains the data and it's labels columns
-    :return: train set, test set , labels of training and test sets data frames
-    """
-    return train_test_split(data, labels, test_size=0.5)
+# searching for the best k for knn algo
 
 
-def knn(x_train, y_train, x_test, n_neighbors=71):
+def check_best_k(features, labels):
+    options_for_k = {k: 0 for k in range(1, 73)}
 
-    model = KNeighborsClassifier(n_neighbors=n_neighbors)
+    for i in range(100):
+        x_train, x_test, y_train, y_test = split_data(
+            features, labels)
+
+        for k in range(1, 73):
+            acc_score = check_knn(x_train, y_train, x_test, y_test, k)
+            options_for_k[k] += acc_score
+    max_key = max(options_for_k, key=options_for_k.get)
+    return max_key
+
+
+def check_knn(x_train, y_train, x_test, y_test, k):
+
+    model = KNeighborsClassifier(n_neighbors=k)
     # Train the model using the training sets
     model.fit(x_train, y_train)
 
-    return model.predict(x_test)
+    y_pred = model.predict(x_test)
 
-
-def check_knn(x_train, y_train, x_test, y_test):
-    avgs_dict = {}
-    splits_num = 100
-    for i in range(1, 73):
-        y_pred = knn(x_train, y_train, x_test, i)
-        acc_score = metrics.accuracy_score(y_test, y_pred)
-        avgs_dict[i] =  acc_score
-    max_key = max(avgs_dict, key=avgs_dict.get)
-    max_val = max(avgs_dict.values())
-    print(
-        f"best accuracy for {label} is for {max_key} neighbours: {max_val}")
+    acc_score = metrics.accuracy_score(y_test, y_pred)
+    return acc_score
 
 
 def check_decision_tree(x_train, y_train, x_test, y_test):
@@ -94,12 +87,6 @@ def check_naive_bayes(x_train, y_train, x_test, y_test):
         f"avg naive bayes accuracy for {label} is {max_key} : {max_val}")
 
 
-def get_features_labels(dh, label):
-    features = dh.get_features(label)
-    labels = dh.get_labels(label)
-    return features, labels
-
-
 # def check_accuracy():
 if __name__ == "__main__":
 
@@ -107,12 +94,15 @@ if __name__ == "__main__":
 
     for label in ["hypertension", "heart_disease", "stroke"]:
         features, labels = get_features_labels(dh, label)
-        x_train, x_test, y_train, y_test = split_data(features, labels)
+        print(check_best_k(features, labels))
 
-        check_knn(x_train, y_train, x_test, y_test)
-        check_naive_bayes(x_train, y_train, x_test, y_test)
-        check_decision_tree(x_train, y_train, x_test, y_test)
-        check_random_forest(x_train, y_train, x_test, y_test)
+        # for i in range(100):
+        #     x_train, x_test, y_train, y_test = split_data(features, labels)
+
+        #     check_knn(x_train, y_train, x_test, y_test)
+        #     check_naive_bayes(x_train, y_train, x_test, y_test)
+        #     check_decision_tree(x_train, y_train, x_test, y_test)
+        #     check_random_forest(x_train, y_train, x_test, y_test)
 
 
 # Challenges: five of the dataset fields are strings.

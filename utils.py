@@ -1,53 +1,74 @@
 import codecs
-
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
 from sklearn_pandas import gen_features
 from sklearn_pandas import DataFrameMapper
 import numpy as np
-from sklearn.impute import SimpleImputer
+from sklearn.impute import KNNImputer
+
 
 def read_data_from_file():
     """
     read data from healthcare-dataset-stroke-data csv file
     :return: DataFrame of the data after transformation
     """
-    # skip first line i.e. read header first and then iterate over each row od csv as a list
     df = pd.read_csv('healthcare-dataset-stroke-data.csv')
     le = LabelEncoder()
-    not_num_cols = ["gender", "ever_married", "work_type", "Residence_type", "smoking_status"]
+    # array of catagorical fields
+    not_num_cols = ["gender", "ever_married",
+                    "work_type", "Residence_type", "smoking_status"]
 
-    imp = SimpleImputer(missing_values=np.nan, strategy='mean')
-    feature_def = gen_features(columns=not_num_cols,
-                               classes=[LabelEncoder])
-    mapper5 = DataFrameMapper(feature_def)
-    tmp_df = pd.DataFrame(mapper5.fit_transform(df), columns=not_num_cols)
+    df = df.drop('id', axis=1)
+    impute = KNNImputer(n_neighbors=5, weights='uniform')
+
+    df['bmi'] = impute.fit_transform(df[['bmi']])
+
+    # Generates a feature definition list which can be passed into DataFrameMapper
+    categorical_feature = gen_features(columns=not_num_cols,
+                                       classes=[LabelEncoder])
+    # map of encoded categorical feature
+    mapper = DataFrameMapper(features=categorical_feature)
+
+    tmp_df = pd.DataFrame(mapper.fit_transform(df), columns=not_num_cols)
+   
     for col in not_num_cols:
         df[col] = tmp_df[col].values
-    imp.fit(df)
-    tmp_arr = imp.transform(df)
-    df = pd.DataFrame(tmp_arr, columns=df.columns)
+
     return df
+
+
+def split_data(data, labels):
+    """
+    Split dataset into training set and test set
+    :param data: pandas data frame contains the data and it's labels columns
+    :return: train set, test set , labels of training and test sets data frames
+    """
+    return train_test_split(data, labels, test_size=0.5)
+
+
+def get_features_labels(dh, label):
+    features = dh.get_features(label)
+    labels = dh.get_labels(label)
+    return features, labels
 
 
 class Singleton(type):
     _instances = {}
+
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
-            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+            cls._instances[cls] = super(
+                Singleton, cls).__call__(*args, **kwargs)
         return cls._instances[cls]
+
 
 class DataHolder(metaclass=Singleton):
     def __init__(self):
         self.df = read_data_from_file()
 
-
     def get_labels(self, name):
         return self.df.loc[:, name]
 
     def get_features(self, label_name):
-        return self.df.loc [ :, self.df.columns != label_name ]
-
-
-
-
+        return self.df.loc[:, self.df.columns != label_name]
