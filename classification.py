@@ -116,7 +116,7 @@ if __name__ == "__main__":
 
     for label in ["hypertension", "heart_disease", "stroke"]:
         features, labels = get_features_labels(dh, label)
-        k = check_best_k_for_knn(features, labels)(features, labels)
+        k = check_best_k_for_knn(features, labels)
         criterion = check_best_criterion_for_decision_tree(features, labels)
         for i in range(100):
             x_train, x_test, y_train, y_test = split_data(features, labels)
