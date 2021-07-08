@@ -36,8 +36,6 @@ def read_data_from_file():
    
     for col in not_num_cols:
         df[col] = tmp_df[col].values
-    print(df)
-    exit()
     return df
 
 
