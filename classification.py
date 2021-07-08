@@ -46,52 +46,62 @@ def check_decision_tree(dh, label):
 
     features, labels = get_features_labels(dh, label)
     splits_num = 100
-    avg = 0
+    avg_gini = 0
+    avg_en = 0
     for _ in range(splits_num):
         x_train, x_test, y_train, y_test = split_data(features, labels)
 
-        # Create Decision Tree classifer object
-        clf = DecisionTreeClassifier()
+        # instantiate the DecisionTreeClassifier model with criterion gini index
+        clf_gini = DecisionTreeClassifier(criterion='gini')
 
+        # instantiate the DecisionTreeClassifier model with criterion gini index
+        clf_en = DecisionTreeClassifier(criterion='entropy')
         # Train Decision Tree Classifer
-        clf = clf.fit(x_train, y_train)
+        clf_gini.fit(x_train, y_train)
+        clf_en.fit(x_train, y_train)
 
-       # Predict the response for test dataset
-        y_pred = clf.predict(x_test)
-        avg += metrics.accuracy_score(y_test, y_pred)
-    print(f"decision tree: best accuracy for {label} is : {avg/splits_num}")
+        # Predict the response for test dataset
+        y_pred_gini = clf_gini.predict(x_test)
+        y_pred_en = clf_en.predict(x_test)
+
+        avg_gini += metrics.accuracy_score(y_test, y_pred_gini)
+        avg_en += metrics.accuracy_score(y_test, y_pred_en)
+    max_criterion = "gini" if (avg_gini > avg_en) else "entropy"
+
+    print(
+        f"decision tree: accuracy for {label} with gini criterion: {avg_gini/splits_num}, with entropy criterion: {avg_en/splits_num}, best perfomance: {max_criterion}   ")
 
 
 def check_naive_bayes(dh, label):
-    totals={"gaussian": 0, "categorial": 0, "multinomial": 0}
-    features, labels=get_features_labels(dh, label)
-    splits_num=100
+    totals = {"gaussian": 0, "categorial": 0, "multinomial": 0}
+    features, labels = get_features_labels(dh, label)
+    splits_num = 100
     for _ in range(splits_num):
-        x_train, x_test, y_train, y_test=split_data(features, labels)
-        gnb=GaussianNB()
-        y_pred=gnb.fit(x_train, y_train).predict(x_test)
-        acc_score=metrics.accuracy_score(y_test, y_pred)
+        x_train, x_test, y_train, y_test = split_data(features, labels)
+        gnb = GaussianNB()
+        y_pred = gnb.fit(x_train, y_train).predict(x_test)
+        acc_score = metrics.accuracy_score(y_test, y_pred)
         totals["gaussian"] += acc_score
-        clf=MultinomialNB()
-        y_pred=clf.fit(x_train, y_train).predict(x_test)
-        acc_score=metrics.accuracy_score(y_test, y_pred)
+        clf = MultinomialNB()
+        y_pred = clf.fit(x_train, y_train).predict(x_test)
+        acc_score = metrics.accuracy_score(y_test, y_pred)
         totals["multinomial"] += acc_score
-    max_key=max(totals, key=totals.get)
-    max_val=max(totals.values())
+    max_key = max(totals, key=totals.get)
+    max_val = max(totals.values())
     print(
         f"avg naive bayes accuracy for {label} is {max_key} : {max_val / splits_num}")
 
 
 def get_features_labels(dh, label):
-    features=dh.get_features(label)
-    labels=dh.get_labels(label)
+    features = dh.get_features(label)
+    labels = dh.get_labels(label)
     return features, labels
 
 
 # def check_accuracy():
 if __name__ == "__main__":
 
-    dh=DataHolder()
+    dh = DataHolder()
     for label in ["hypertension", "heart_disease", "stroke"]:
         check_knn(dh, label)
         check_naive_bayes(dh, label)
