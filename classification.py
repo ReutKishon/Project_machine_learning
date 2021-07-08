@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestClassifier
 # searching for the best k for knn algo
 
 
-def check_best_k(features, labels):
+def check_best_k_for_knn(features, labels):
     options_for_k = {k: 0 for k in range(1, 73)}
 
     for i in range(100):
@@ -34,27 +34,49 @@ def check_knn(x_train, y_train, x_test, y_test, k):
     return acc_score
 
 
-def check_decision_tree(x_train, y_train, x_test, y_test):
+def check_best_criterion_for_decision_tree(features, labels):
 
-    # instantiate the DecisionTreeClassifier model with criterion gini index
-    clf_gini = DecisionTreeClassifier(criterion='gini')
+    options_for_criterion = {'gini': 0, 'entropy': 0}
 
-    # instantiate the DecisionTreeClassifier model with criterion gini index
-    clf_en = DecisionTreeClassifier(criterion='entropy')
+    for i in range(100):
+        x_train, x_test, y_train, y_test = split_data(
+            features, labels)
+
+        # instantiate the DecisionTreeClassifier model with criterion gini index
+        clf_gini = DecisionTreeClassifier(criterion='gini')
+
+        # instantiate the DecisionTreeClassifier model with criterion gini index
+        clf_en = DecisionTreeClassifier(criterion='entropy')
+        # Train Decision Tree Classifer
+        clf_gini.fit(x_train, y_train)
+        clf_en.fit(x_train, y_train)
+
+        # Predict the response for test dataset
+        y_pred_gini = clf_gini.predict(x_test)
+        y_pred_en = clf_en.predict(x_test)
+
+        accuracy_gini = metrics.accuracy_score(y_test, y_pred_gini)
+        accuracy_en = metrics.accuracy_score(y_test, y_pred_en)
+        options_for_criterion['gini'] += accuracy_gini
+        options_for_criterion['entropy'] += accuracy_en
+    max_criterion = max(options_for_criterion, key=options_for_criterion.get)
+
+    return max_criterion
+
+
+def check_decision_tree(x_train, y_train, x_test, y_test, criterion):
+
+    # instantiate the DecisionTreeClassifier model with criterion
+    clf = DecisionTreeClassifier(criterion=criterion)
+
     # Train Decision Tree Classifer
-    clf_gini.fit(x_train, y_train)
-    clf_en.fit(x_train, y_train)
+    clf.fit(x_train, y_train)
 
     # Predict the response for test dataset
-    y_pred_gini = clf_gini.predict(x_test)
-    y_pred_en = clf_en.predict(x_test)
+    y_pred = clf.predict(x_test)
 
-    accuracy_gini = metrics.accuracy_score(y_test, y_pred_gini)
-    accuracy_en = metrics.accuracy_score(y_test, y_pred_en)
-    max_criterion = "gini" if (accuracy_gini > accuracy_en) else "entropy"
-
-    print(
-        f"decision tree: accuracy for {label} with gini criterion: {accuracy_gini}, with entropy criterion: {accuracy_en}, best perfomance: {max_criterion}   ")
+    accuracy = metrics.accuracy_score(y_test, y_pred)
+    return accuracy
 
 
 def check_random_forest(x_train, y_train, x_test, y_test):
@@ -94,15 +116,15 @@ if __name__ == "__main__":
 
     for label in ["hypertension", "heart_disease", "stroke"]:
         features, labels = get_features_labels(dh, label)
-        print(check_best_k(features, labels))
+        k = check_best_k_for_knn(features, labels)(features, labels)
+        criterion = check_best_criterion_for_decision_tree(features, labels)
+        for i in range(100):
+            x_train, x_test, y_train, y_test = split_data(features, labels)
 
-        # for i in range(100):
-        #     x_train, x_test, y_train, y_test = split_data(features, labels)
-
-        #     check_knn(x_train, y_train, x_test, y_test)
-        #     check_naive_bayes(x_train, y_train, x_test, y_test)
-        #     check_decision_tree(x_train, y_train, x_test, y_test)
-        #     check_random_forest(x_train, y_train, x_test, y_test)
+            check_knn(x_train, y_train, x_test, y_test, k)
+            check_naive_bayes(x_train, y_train, x_test, y_test)
+            check_decision_tree(x_train, y_train, x_test, y_test, criterion)
+            check_random_forest(x_train, y_train, x_test, y_test)
 
 
 # Challenges: five of the dataset fields are strings.

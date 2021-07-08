@@ -14,12 +14,13 @@ def read_data_from_file():
     :return: DataFrame of the data after transformation
     """
     df = pd.read_csv('healthcare-dataset-stroke-data.csv')
-    le = LabelEncoder()
+
     # array of catagorical fields
     not_num_cols = ["gender", "ever_married",
                     "work_type", "Residence_type", "smoking_status"]
 
     df = df.drop('id', axis=1)
+
     impute = KNNImputer(n_neighbors=5, weights='uniform')
 
     df['bmi'] = impute.fit_transform(df[['bmi']])
@@ -31,7 +32,7 @@ def read_data_from_file():
     mapper = DataFrameMapper(features=categorical_feature)
 
     tmp_df = pd.DataFrame(mapper.fit_transform(df), columns=not_num_cols)
-   
+
     for col in not_num_cols:
         df[col] = tmp_df[col].values
 
