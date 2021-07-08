@@ -113,7 +113,6 @@ def check_naive_bayes(x_train, y_train, x_test, y_test):
 if __name__ == "__main__":
 
     dh = DataHolder()
-
     for label in ["hypertension", "heart_disease", "stroke"]:
         features, labels = get_features_labels(dh, label)
         k = check_best_k_for_knn(features, labels)(features, labels)
