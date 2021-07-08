@@ -1,12 +1,19 @@
 import codecs
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn import preprocessing
 import pandas as pd
 from sklearn_pandas import gen_features
 from sklearn_pandas import DataFrameMapper
 import numpy as np
 from sklearn.impute import KNNImputer
 
+def norm_data(df):
+    columns_names = df.columns
+    x = df.values  # returns a numpy array
+    min_max_scaler = preprocessing.MinMaxScaler()
+    x_scaled = min_max_scaler.fit_transform(x)
+    return pd.DataFrame(x_scaled, columns=columns_names)
 
 def read_data_from_file():
     """
@@ -36,7 +43,8 @@ def read_data_from_file():
    
     for col in not_num_cols:
         df[col] = tmp_df[col].values
-    return df
+    #normalize data
+    return norm_data(df)
 
 
 def split_data(data, labels):
