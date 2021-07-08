@@ -1,3 +1,4 @@
+from sklearn import tree
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.naive_bayes import GaussianNB, CategoricalNB, MultinomialNB
@@ -6,6 +7,7 @@ from utils import DataHolder
 import pandas as pd
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
 
 def split_data(data, labels):
@@ -72,6 +74,29 @@ def check_decision_tree(dh, label):
         f"decision tree: accuracy for {label} with gini criterion: {avg_gini/splits_num}, with entropy criterion: {avg_en/splits_num}, best perfomance: {max_criterion}   ")
 
 
+def check_random_forest(dh, label):
+
+    features, labels = get_features_labels(dh, label)
+    splits_num = 100
+    accuracy_score = 0
+
+    for _ in range(splits_num):
+        x_train, x_test, y_train, y_test = split_data(features, labels)
+
+        # Create a Gaussian Classifier
+        clf = RandomForestClassifier(n_estimators=100)
+
+        # Train the model using the training sets y_pred=clf.predict(X_test)
+        clf.fit(x_train, y_train)
+
+        # prediction on test set
+        y_pred = clf.predict(x_test)
+        accuracy_score += metrics.accuracy_score(y_test, y_pred)
+
+    print(
+        f"Random forest accuracy for {label} is {accuracy_score/splits_num}")
+
+
 def check_naive_bayes(dh, label):
     totals = {"gaussian": 0, "categorial": 0, "multinomial": 0}
     features, labels = get_features_labels(dh, label)
@@ -106,6 +131,7 @@ if __name__ == "__main__":
         check_knn(dh, label)
         check_naive_bayes(dh, label)
         check_decision_tree(dh, label)
+        check_random_forest(dh, label)
 
 
 # Challenges: five of the dataset fields are strings.
