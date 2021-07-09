@@ -30,9 +30,11 @@ def read_data_from_file():
 
     df = df.drop('id', axis=1)
 
-    impute = KNNImputer(n_neighbors=5, weights='uniform')
+    impute = KNNImputer(n_neighbors=71, weights='uniform') #71 is the sqrt of the data rows length
+    impute2 = KNNImputer(n_neighbors=3, weights='uniform') #3 smoking classes
+
     df['bmi'] = impute.fit_transform(df[['bmi']])
-    df['smoking_status'] = impute.fit_transform(df[['smoking_status']])
+    df['smoking_status'] = impute2.fit_transform(df[['smoking_status']])
 
     # Generates a feature definition list which can be passed into DataFrameMapper
     categorical_feature = gen_features(columns=not_num_cols,
