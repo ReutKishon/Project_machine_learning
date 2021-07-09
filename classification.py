@@ -154,7 +154,7 @@ def run_ml_project():
         # Iterating over values
         for key, val in best_performence_algo.items():
             print(key, "accuracy:", val / tests_num)
-        print(f"{max_algo} has the best performances, with {max_perf} accuracy!")
+        print(f"{max_algo} has the best performances, with {round(max_perf, 2)}% accuracy!")
 
 
 if __name__ == "__main__":
