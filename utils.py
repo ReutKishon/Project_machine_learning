@@ -54,7 +54,7 @@ def split_data(data, labels):
     :param data: pandas data frame contains the data and it's labels columns
     :return: train set, test set , labels of training and test sets data frames
     """
-    return train_test_split(data, labels, test_size=0.5)
+    return train_test_split(data, labels, test_size=0.3)
 
 
 def get_features_labels(dh, label):
@@ -81,4 +81,4 @@ class DataHolder(metaclass=Singleton):
         return self.df.loc[:, name]
 
     def get_features(self, label_name):
-        return self.df.loc[:, self.df.columns != label_name]
+        return self.df.loc[:, (self.df.columns != label_name)]

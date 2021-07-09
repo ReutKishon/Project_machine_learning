@@ -2,6 +2,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB, CategoricalNB, MultinomialNB
 from sklearn import metrics
 from utils import *
+import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
@@ -10,6 +11,7 @@ from sklearn.ensemble import RandomForestClassifier
 
 def check_best_k_for_knn(features, labels):
     options_for_k = {k: 0 for k in range(1, 73)}
+    error_rate = []
 
     for i in range(100):
         x_train, x_test, y_train, y_test = split_data(
@@ -18,7 +20,20 @@ def check_best_k_for_knn(features, labels):
         for k in range(1, 73):
             acc_score = check_knn(x_train, y_train, x_test, y_test, k)
             options_for_k[k] += acc_score
+            error_rate.append(1-acc_score)
     max_key = max(options_for_k, key=options_for_k.get)
+    error_rate = np.true_divide(error_rate, 100)
+    plt.figure(figsize=(10, 6))
+    plt.plot(range(1, 73), error_rate, color='blue', linestyle='dashed',
+             marker='o', markerfacecolor='red', markersize=10)
+    plt.title('Error Rate vs. K Value')
+    plt.xlabel('K')
+    plt.ylabel('Error Rate')
+    plt.show()
+
+    print("Minimum error:-", min(error_rate),
+          "at K =", error_rate.index(min(error_rate)))
+
     return max_key
 
 
@@ -132,6 +147,7 @@ if __name__ == "__main__":
         features, labels = get_features_labels(dh, label)
         k = check_best_k_for_knn(features, labels)
         print(f"best k for knn algo is: {k}")
+        exit()
         criterion = check_best_criterion_for_decision_tree(features, labels)
         print(f"best criterion for decision_tree algo is: {criterion}")
         option_NB = best_option_for_naive_bayes(features, labels)
@@ -154,8 +170,8 @@ if __name__ == "__main__":
         max_perf = max(best_performence_algo.values())
         # Iterating over values
         for key, val in best_performence_algo.items():
-          print(key, "accuracy:", val/100)
-        print(f"{max_algo} has the best performances, with {max_perf} accuracy!")
+            print(key, "accuracy:", val/100)
+        print(f"{max_algo} has the best performances, with {max_perf/100} accuracy!")
 
 # Challenges: five of the dataset fields are strings.
 # In order to implemement knn algorithm we need to calculate Euclidian distance
