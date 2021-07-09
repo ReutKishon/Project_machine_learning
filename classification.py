@@ -90,42 +90,72 @@ def check_random_forest(x_train, y_train, x_test, y_test):
     # prediction on test set
     y_pred = clf.predict(x_test)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
-
-    print(
-        f"Random forest accuracy for {label} is {accuracy_score}")
+    return accuracy_score
 
 
-def check_naive_bayes(x_train, y_train, x_test, y_test):
-    gnb = GaussianNB()
-    y_pred = gnb.fit(x_train, y_train).predict(x_test)
-    gaussian_score = metrics.accuracy_score(y_test, y_pred)
-    clf = MultinomialNB()
+def best_option_for_naive_bayes(features, labels):
+
+    dic = {'GaussianNB': 0, 'multinomialNB': 0}
+
+    for i in range(100):
+        x_train, x_test, y_train, y_test = split_data(
+            features, labels)
+
+        gnb = GaussianNB()
+        y_pred = gnb.fit(x_train, y_train).predict(x_test)
+        dic['GaussianNB'] += metrics.accuracy_score(y_test, y_pred)
+        clf = MultinomialNB()
+        y_pred = clf.fit(x_train, y_train).predict(x_test)
+        dic['multinomialNB'] += metrics.accuracy_score(y_test, y_pred)
+
+    max_key = max(dic,
+                  key=dic.get)
+
+    return max_key
+
+
+def check_naive_bayes(x_train, y_train, x_test, y_test, option):
+
+    clf = GaussianNB() if (option == 'GaussianNB') else MultinomialNB()
     y_pred = clf.fit(x_train, y_train).predict(x_test)
-    multinomial_score = metrics.accuracy_score(y_test, y_pred)
-    max_key = "gaussian" if (
-        gaussian_score > multinomial_score) else "multinomial"
-    max_val = max(gaussian_score, multinomial_score)
-    print(
-        f"avg naive bayes accuracy for {label} is {max_key} : {max_val}")
+    accuracy_score = metrics.accuracy_score(y_test, y_pred)
+    return accuracy_score
 
 
-# def check_accuracy():
 if __name__ == "__main__":
 
     dh = DataHolder()
+    best_performence_algo = {'knn': 0, 'naive_bayes': 0,
+                             'decision_tree': 0, 'random_forest': 0}
 
     for label in ["hypertension", "heart_disease", "stroke"]:
         features, labels = get_features_labels(dh, label)
         k = check_best_k_for_knn(features, labels)
+        print(f"best k for knn algo is: {k}")
         criterion = check_best_criterion_for_decision_tree(features, labels)
+        print(f"best criterion for decision_tree algo is: {criterion}")
+        option_NB = best_option_for_naive_bayes(features, labels)
+        print(f"best option for naive_bayes algo is: {option_NB}")
+
         for i in range(100):
             x_train, x_test, y_train, y_test = split_data(features, labels)
 
-            check_knn(x_train, y_train, x_test, y_test, k)
-            check_naive_bayes(x_train, y_train, x_test, y_test)
-            check_decision_tree(x_train, y_train, x_test, y_test, criterion)
-            check_random_forest(x_train, y_train, x_test, y_test)
+            best_performence_algo['knn'] += check_knn(
+                x_train, y_train, x_test, y_test, k)
+            best_performence_algo['naive_bayes'] += check_naive_bayes(
+                x_train, y_train, x_test, y_test, option_NB)
+            best_performence_algo['decision_tree'] += check_decision_tree(
+                x_train, y_train, x_test, y_test, criterion)
+            best_performence_algo['random_forest'] += check_random_forest(
+                x_train, y_train, x_test, y_test)
 
+        max_algo = max(best_performence_algo,
+                       key=best_performence_algo.get)
+        max_perf = max(best_performence_algo.values())
+        # Iterating over values
+        for key, val in best_performence_algo.items():
+          print(key, "accuracy:", val/100)
+        print(f"{max_algo} has the best performances, with {max_perf} accuracy!")
 
 # Challenges: five of the dataset fields are strings.
 # In order to implemement knn algorithm we need to calculate Euclidian distance
