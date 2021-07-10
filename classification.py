@@ -180,7 +180,7 @@ def run_ml_project():
             best_performence_algo [ 'logistic_regression' ] += check_logistic_regression(
                 x_train, y_train, x_test, y_test)
             best_performence_algo [ 'svm' ] += check_svm(
-                x_train, y_train, x_test, y_test)
+                 x_train, y_train, x_test, y_test)
 
 
         max_algo = max(best_performence_algo,

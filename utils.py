@@ -11,6 +11,12 @@ from sklearn.feature_selection import SelectKBest, chi2
 
 
 def select_features(features, labels):
+    """
+    Select features according to the k highest scores.
+    :param features: dataframe of fearues
+    :param labels: dataframe of labels
+    :return: dataframe with the important features only
+    """
     fs = SelectKBest(score_func=chi2, k='all')
     fs.fit(features, labels)
     per = [ ]
@@ -27,8 +33,7 @@ def select_features(features, labels):
     # Creating an insignificant variable to store the variables with Importance % < 0.005
     insignificant = features_data.loc [ features_data [ 'Importance(%)' ] < 0.005 ] [ 'Feature' ].unique()
 
-    features_data = features_data.set_index('Feature')
-    features.drop(insignificant, axis =1)
+    features = features.drop(insignificant, axis =1)
     return norm_data(features)
 
 def norm_data(df):
