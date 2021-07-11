@@ -7,32 +7,20 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 # searching for the best k for knn algo
+tests_num = 100
 
 
 def check_best_k_for_knn(features, labels):
-    options_for_k = {k: 0 for k in range(1, 73)}
-    error_rate = []
+    options_for_k = {k: 0 for k in range(1, 73, 2)}
 
-    for i in range(100):
+    for _ in range(tests_num):
         x_train, x_test, y_train, y_test = split_data(
             features, labels)
 
-        for k in range(1, 73):
+        for k in range(1, 73, 2):
             acc_score = check_knn(x_train, y_train, x_test, y_test, k)
             options_for_k[k] += acc_score
-            error_rate.append(1-acc_score)
     max_key = max(options_for_k, key=options_for_k.get)
-    error_rate = np.true_divide(error_rate, 100)
-    plt.figure(figsize=(10, 6))
-    plt.plot(range(1, 73), error_rate, color='blue', linestyle='dashed',
-             marker='o', markerfacecolor='red', markersize=10)
-    plt.title('Error Rate vs. K Value')
-    plt.xlabel('K')
-    plt.ylabel('Error Rate')
-    plt.show()
-
-    print("Minimum error:-", min(error_rate),
-          "at K =", error_rate.index(min(error_rate)))
 
     return max_key
 
@@ -53,7 +41,7 @@ def check_best_criterion_for_decision_tree(features, labels):
 
     options_for_criterion = {'gini': 0, 'entropy': 0}
 
-    for i in range(100):
+    for _ in range(tests_num):
         x_train, x_test, y_train, y_test = split_data(
             features, labels)
 
@@ -112,7 +100,7 @@ def best_option_for_naive_bayes(features, labels):
 
     dic = {'GaussianNB': 0, 'multinomialNB': 0}
 
-    for i in range(100):
+    for _ in range(tests_num):
         x_train, x_test, y_train, y_test = split_data(
             features, labels)
 
@@ -137,29 +125,30 @@ def check_naive_bayes(x_train, y_train, x_test, y_test, option):
     return accuracy_score
 
 
-if __name__ == "__main__":
-
+def run_ml_project():
     dh = DataHolder()
-    best_performence_algo = {'knn': 0, 'naive_bayes': 0,
-                             'decision_tree': 0, 'random_forest': 0}
-
     for label in ["hypertension", "heart_disease", "stroke"]:
+        best_performence_algo = {'knn': 0, 'naive_bayes': 0,
+                                 'decision_tree': 0, 'random_forest': 0}
         features, labels = get_features_labels(dh, label)
         k = check_best_k_for_knn(features, labels)
-        print(f"best k for knn algo is: {k}")
-        exit()
-        criterion = check_best_criterion_for_decision_tree(features, labels)
-        print(f"best criterion for decision_tree algo is: {criterion}")
-        option_NB = best_option_for_naive_bayes(features, labels)
-        print(f"best option for naive_bayes algo is: {option_NB}")
 
-        for i in range(100):
+        print(f"all following results are for {label}")
+        print(f"{label}: best k for knn algo is: {k}")
+
+        criterion = check_best_criterion_for_decision_tree(features, labels)
+        print(f"{label}: best criterion for decision_tree algo is: {criterion}")
+
+        option_nb = best_option_for_naive_bayes(features, labels)
+        print(f"best option for naive_bayes algo is: {option_nb}")
+
+        for _ in range(tests_num):
             x_train, x_test, y_train, y_test = split_data(features, labels)
 
             best_performence_algo['knn'] += check_knn(
                 x_train, y_train, x_test, y_test, k)
             best_performence_algo['naive_bayes'] += check_naive_bayes(
-                x_train, y_train, x_test, y_test, option_NB)
+                x_train, y_train, x_test, y_test, option_nb)
             best_performence_algo['decision_tree'] += check_decision_tree(
                 x_train, y_train, x_test, y_test, criterion)
             best_performence_algo['random_forest'] += check_random_forest(
@@ -170,8 +159,14 @@ if __name__ == "__main__":
         max_perf = max(best_performence_algo.values())
         # Iterating over values
         for key, val in best_performence_algo.items():
-            print(key, "accuracy:", val/100)
-        print(f"{max_algo} has the best performances, with {max_perf/100} accuracy!")
+
+            print(key, "accuracy:", val / tests_num)
+            print(
+                f"{max_algo} has the best performances, with {round(max_perf, 2)}% accuracy!")
+
+
+if __name__ == "__main__":
+    run_ml_project()
 
 # Challenges: five of the dataset fields are strings.
 # In order to implemement knn algorithm we need to calculate Euclidian distance
