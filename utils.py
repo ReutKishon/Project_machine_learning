@@ -106,11 +106,7 @@ def split_data(data, labels):
     :param data: pandas data frame contains the data and it's labels columns
     :return: train set, test set , labels of training and test sets data frames
     """
-<<<<<<< HEAD
-    return train_test_split(data, labels, test_size=0.3)
-=======
     return train_test_split(data, labels, test_size=0.25)
->>>>>>> 4560a7ccd7199e8ca0477e0631f94531d04441cb
 
 
 def get_features_labels(dh, label):
