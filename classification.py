@@ -10,7 +10,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
 # searching for the best k for knn algo
-tests_num = 3
+tests_num = 1
 
 def check_best_k_for_knn(features, labels):
     options_for_k = {k: 0 for k in range(1, 73)}
@@ -152,12 +152,11 @@ def check_svm(x_train, y_train, x_test, y_test):
 def run_ml_project():
     mark = 0
     dh = DataHolder()
-    for label in [ "hypertension", "heart_disease", "stroke" ]:
+    for label in [ "heart_disease",  "stroke", "hypertension"]:
         best_performence_algo = {'knn': 0, 'naive_bayes': 0, "svm":0,
                                  'decision_tree': 0, 'random_forest': 0, 'logistic_regression':0}
         features, labels = get_features_labels(dh, label)
         features = select_features(features, labels)
-
         k = check_best_k_for_knn(features, labels)
         print(f"all follwing results are for {label}")
         print(f"best k for knn algo is: {k}")
