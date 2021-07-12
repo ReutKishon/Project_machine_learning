@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
 
-tests_num = 3
+tests_num = 1
 
 # searching for the best k for knn algo
 

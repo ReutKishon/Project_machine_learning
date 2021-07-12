@@ -1,8 +1,10 @@
-import codecs
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 from sklearn import preprocessing
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
 from sklearn_pandas import gen_features
 from sklearn_pandas import DataFrameMapper
 import numpy as np
@@ -29,10 +31,8 @@ def select_features(features, labels):
                                   'Importance(%)': per}).sort_values(by=[ 'Scores' ], ascending=False)
 
 
-
     # Creating an insignificant variable to store the variables with Importance % < 0.005
     insignificant = features_data.loc [ features_data [ 'Importance(%)' ] < 0.005 ] [ 'Feature' ].unique()
-
     features = features.drop(insignificant, axis =1)
     return norm_data(features)
 
@@ -58,11 +58,11 @@ def read_data_from_file():
 
     df = df.drop('id', axis=1)
 
-    impute = KNNImputer(n_neighbors=71, weights='uniform') #71 is the sqrt of the data rows length
-    impute2 = KNNImputer(n_neighbors=3, weights='distance') #3 smoking classes
+    bmi_impute = KNNImputer(n_neighbors=71, weights='uniform') #71 is the sqrt of the data rows length
+    smoking_impute = KNNImputer(n_neighbors=3, weights='distance') #3 smoking classes
 
-    df['bmi'] = impute.fit_transform(df[['bmi']])
-    df['smoking_status'] = impute2.fit_transform(df[['smoking_status']])
+    df['bmi'] = bmi_impute.fit_transform(df[['bmi']])
+    df['smoking_status'] = smoking_impute.fit_transform(df[['smoking_status']])
     # Generates a feature definition list which can be passed into DataFrameMapper
     categorical_feature = gen_features(columns=not_num_cols,
                                        classes=[LabelEncoder])
@@ -87,12 +87,13 @@ def treat_outliers(df):
     :return: df
     """
 
-    bmi_high1 = np.percentile(df [ 'bmi' ], 99.7)
-    avg_glucose_level_high1 = np.percentile(df [ 'avg_glucose_level' ], 99.7)
+    plt.subplot(1, 2, 1)
+    sns.distplot(df [ 'bmi' ])
+    plt.subplot(1, 2, 2)
+    df [ 'bmi' ].plot.box(figsize=(16, 5))
+    plt.show()
+    bmi_high1 = np.percentile(df [ 'bmi' ], 50)
     df[ 'bmi' ] = np.where(df[ 'bmi' ] > bmi_high1, bmi_high1, df [ 'bmi' ])
-    df[ 'avg_glucose_level' ] = np.where(df [ 'avg_glucose_level' ] > avg_glucose_level_high1,
-                                              avg_glucose_level_high1,
-                                              df [ 'avg_glucose_level' ])
 
     #since scaning the data of bmi let us know that there are still too many outliers, we repeat the procedure only for it
     bmi_high1 = np.percentile(df [ 'bmi' ], 99.7)
