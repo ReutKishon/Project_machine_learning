@@ -110,7 +110,7 @@ def get_tests_scores(params, reg, x_test, y_test):
 
 def vote_results(dh):
     features, labels = get_features_labels(dh,  "avg_glucose_level")
-    X, x_test, y, y_test = split_data(features, labels, 0.1)
+    X, x_test, y, y_test = split_data(features, labels, 0.03)
 
     # Train classifiers
     reg1 = GradientBoostingRegressor(random_state=1)
@@ -150,4 +150,4 @@ if __name__ == "__main__":
 
     dh = DataHolder()
     vote_results(dh)
-    #check_dt_reg(dh, "avg_glucose_level")
+    check_dt_reg(dh, "avg_glucose_level")
