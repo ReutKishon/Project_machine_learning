@@ -11,19 +11,18 @@ def check_dt_reg(dh, label):
     x_train, x_test, y_train, y_test = split_data(features, labels)
     dt = DecisionTreeRegressor()
     dt.fit(x_train, y_train)
-    y_pred = dt.predict(x_test)
+    score = dt.score(x_test, y_test)
+    print(score)
+    
 
-    for i in y_pred[:12]:
-        print(i)
-
-    plt.figure(figsize=(4, 3))
-    plt.scatter(y_test, y_pred)
-    plt.plot([0, 50], [0, 50], '--k')
-    plt.axis('tight')
-    plt.xlabel('True avg_glucose_level ')
-    plt.ylabel('Predicted avg_glucose_level ')
-    plt.tight_layout()
-    plt.show()
+    # plt.figure(figsize=(4, 3))
+    # plt.scatter(y_test, y_pred)
+    # plt.plot([0, 50], [0, 50], '--k')
+    # plt.axis('tight')
+    # plt.xlabel('True avg_glucose_level ')
+    # plt.ylabel('Predicted avg_glucose_level ')
+    # plt.tight_layout()
+    # plt.show()
 
 # mse_dt = MSE(y_test, y_pred)
 # rmse_dt = mse_dt**(1/2)
