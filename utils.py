@@ -59,7 +59,7 @@ def read_data_from_file():
     df = df.drop('id', axis=1)
 
     bmi_impute = KNNImputer(n_neighbors=71, weights='uniform') #71 is the sqrt of the data rows length
-    smoking_impute = KNNImputer(n_neighbors=3, weights='distance') #3 smoking classes
+    smoking_impute = KNNImputer(n_neighbors=len(df['smoking_status'])/3, weights='distance') #3 smoking classes
 
     df['bmi'] = bmi_impute.fit_transform(df[['bmi']])
     df['smoking_status'] = smoking_impute.fit_transform(df[['smoking_status']])
@@ -101,13 +101,13 @@ def treat_outliers(df):
 
 
 
-def split_data(data, labels):
+def split_data(data, labels, test_size=0.25):
     """
     Split dataset into training set and test set
     :param data: pandas data frame contains the data and it's labels columns
     :return: train set, test set , labels of training and test sets data frames
     """
-    return train_test_split(data, labels, test_size=0.25)
+    return train_test_split(data, labels, test_size=test_size)
 
 
 def get_features_labels(dh, label):
