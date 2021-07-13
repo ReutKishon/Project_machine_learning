@@ -1,3 +1,5 @@
+import csv
+
 from sklearn import ensemble
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
@@ -147,6 +149,13 @@ def vote_results(dh):
     reg2 = RandomForestRegressor(random_state=1)
     reg3 = LinearRegression()
 
+
+    knnr = KNeighborsRegressor()
+    knnr.fit(X, y)
+    knn_pred = knnr.predict(x_test)
+    print_score(knn_pred, y_test, "knn", x_test)
+
+
     dt = DecisionTreeRegressor(max_depth = 2)
     dt.fit(X, y)
     pred_dt = dt.predict(x_test)
@@ -187,8 +196,23 @@ def vote_results(dh):
 
     plt.show()
 
+def create_csv_file():
+    with open('results.csv', 'w',  newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(["algorithm", "explained_variance_score", "max_error", "mean_absolute_error"
+                             , "mean_squared_error", "mean_squared_log_error", "mean_absolute_percentage_error",
+                             "median_absolute_error", "r2"])
+
 
 def print_score(y_pred, y_test, name, x_test):
+    scores = [name, explained_variance_score(y_test, y_pred), max_error(y_test, y_pred), mean_absolute_error(y_test, y_pred),
+              mean_squared_error(y_test, y_pred), mean_squared_log_error(y_test, y_pred),
+              mean_absolute_percentage_error(y_test, y_pred), median_absolute_error(y_test, y_pred),
+              r2_score(y_test, y_pred)]
+
+    with open('results.csv', 'a',  newline='') as csv_file:
+        csv_writer = csv.writer(csv_file)
+        csv_writer.writerow(scores)
     print(f"{name} explained variannce score: {explained_variance_score(y_test, y_pred)}")
     print(f"max error {name}:{max_error(y_test, y_pred)} ")
     print(f"mean abs error {name}:{mean_absolute_error(y_test, y_pred)} ")
@@ -216,7 +240,7 @@ def print_score(y_pred, y_test, name, x_test):
 
 
 if __name__ == "__main__":
-
+    create_csv_file()
     dh = DataHolder()
     vote_results(dh)
     # check_dt_reg(dh, "avg_glucose_level")
