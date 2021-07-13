@@ -75,6 +75,7 @@ def read_data_from_file():
         df[col] = tmp_df[col].values
     treat_outliers(df)
 
+
     #normalize data
     return df
 

@@ -6,6 +6,8 @@ from utils import *
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
+from best_hyperparamters import *
+
 
 tests_num = 1
 
@@ -19,10 +21,11 @@ def check_knn(x_train, y_train, x_test, y_test, k):
     y_pred = model.predict(x_test)
 
     acc_score = metrics.accuracy_score(y_test, y_pred)
+
     return acc_score
 
 
-def check_decision_tree(x_train, y_train, x_test, y_test,max_depth):
+def check_decision_tree(x_train, y_train, x_test, y_test, max_depth):
 
     # instantiate the DecisionTreeClassifier model with criterion
     clf = DecisionTreeClassifier(max_depth=max_depth)
@@ -34,6 +37,7 @@ def check_decision_tree(x_train, y_train, x_test, y_test,max_depth):
     y_pred = clf.predict(x_test)
 
     accuracy = metrics.accuracy_score(y_test, y_pred)
+
     return accuracy
 
 
@@ -48,6 +52,7 @@ def check_random_forest(x_train, y_train, x_test, y_test):
     # prediction on test set
     y_pred = clf.predict(x_test)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
+
     return accuracy_score
 
 
@@ -56,6 +61,7 @@ def check_naive_bayes(x_train, y_train, x_test, y_test, option):
     clf = GaussianNB() if (option == 'GaussianNB') else MultinomialNB()
     y_pred = clf.fit(x_train, y_train).predict(x_test)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
+
     return accuracy_score
 
 
@@ -68,7 +74,6 @@ def run_ml_project():
                                  'decision_tree': 0, 'random_forest': 0}
         features, labels = get_features_labels(dh, label)
         features = select_features(features, labels)
-        
 
         print(f"\nall following results are for {label}")
         k = check_best_k_for_knn(features, labels)
@@ -77,11 +82,11 @@ def run_ml_project():
             x_train, x_test, y_train, y_test = split_data(features, labels)
 
             best_performence_algo['knn'] += check_knn(
-                x_train, y_train, x_test, y_test, k)
+                x_train, y_train, x_test, y_test, 13)
             best_performence_algo['naive_bayes'] += check_naive_bayes(
                 x_train, y_train, x_test, y_test, 'multinomialNB')
             best_performence_algo['decision_tree'] += check_decision_tree(
-                x_train, y_train, x_test, y_test)
+                x_train, y_train, x_test, y_test, 4)
             best_performence_algo['random_forest'] += check_random_forest(
                 x_train, y_train, x_test, y_test)
 
