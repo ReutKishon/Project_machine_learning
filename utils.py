@@ -75,6 +75,7 @@ def read_data_from_file():
         df[col] = tmp_df[col].values
     treat_outliers(df)
 
+
     #normalize data
     return df
 
@@ -134,4 +135,4 @@ class DataHolder(metaclass=Singleton):
         return self.df.loc[:, name]
 
     def get_features(self, label_name):
-        return self.df.loc[:, self.df.columns != label_name]
+        return self.df.loc[:, (self.df.columns != label_name)]
