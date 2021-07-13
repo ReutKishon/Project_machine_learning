@@ -7,6 +7,21 @@ from utils import get_features_labels
 from sklearn.metrics import mean_squared_error as MSE
 from matplotlib import pyplot as plt
 import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+
+
+def linear_regression(dh, label):
+    features, labels = get_features_labels(dh, label)
+    x_train, x_test, y_train, y_test = split_data(features, labels)
+
+    LR = LinearRegression()
+    LR.fit(x_train, y_train)
+    response = LR.predict(x_test)
+    r2 = LR.score(x_test, y_test)
+
+ 
 
 
 def check_dt_reg(dh, label):
@@ -34,7 +49,7 @@ def check_dt_reg(dh, label):
     plt.xlabel('True avg_glucose_level ')
     plt.ylabel('Predicted avg_glucose_level ')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
     dt = DecisionTreeRegressor()
     dt.fit(x_train, y_train)
@@ -48,7 +63,7 @@ def check_dt_reg(dh, label):
     plt.xlabel('True avg_glucose_level ')
     plt.ylabel('Predicted avg_glucose_level ')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
     mse_dt = MSE(y_test, y_pred)
     rmse_dt = mse_dt**(1/2)
@@ -66,7 +81,7 @@ def check_dt_reg(dh, label):
     plt.xlabel('True avg_glucose_level ')
     plt.ylabel('Predicted avg_glucose_level ')
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
     mse_dt = MSE(y_test, y_pred)
     rmse_dt = mse_dt**(1/2)
@@ -77,4 +92,6 @@ def check_dt_reg(dh, label):
 if __name__ == "__main__":
 
     dh = DataHolder()
-    check_dt_reg(dh, "avg_glucose_level")
+    linear_regression(dh, "avg_glucose_level")
+
+    # check_dt_reg(dh, "avg_glucose_level")

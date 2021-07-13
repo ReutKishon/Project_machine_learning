@@ -67,10 +67,7 @@ def check_best_criterion_for_decision_tree(features, labels):
         accuracy_en = metrics.accuracy_score(y_test, y_pred_en)
         options_for_criterion['gini'] += accuracy_gini
         options_for_criterion['entropy'] += accuracy_en
-    print(
-        f"Decision tree with gini index score: {options_for_criterion['gini']/tests_num}")
-    print(
-        f"Decision tree with entropy score: {options_for_criterion['entropy']/tests_num}")
+
     max_criterion = max(options_for_criterion, key=options_for_criterion.get)
 
     return max_criterion
@@ -132,10 +129,6 @@ def best_option_for_naive_bayes(features, labels):
         clf = MultinomialNB()
         y_pred = clf.fit(x_train, y_train).predict(x_test)
         dic['multinomialNB'] += metrics.accuracy_score(y_test, y_pred)
-    print(
-        f"naive_bayes with multinomialNB score: {dic['multinomialNB']/tests_num}")
-    print(
-        f"naive_bayes with GaussianNB score: {dic['GaussianNB']/tests_num}")
 
     max_key = max(dic,
                   key=dic.get)
@@ -174,16 +167,15 @@ def run_ml_project():
         print("\n")
 
         print(f"all following results are for {label}")
-        # k = check_best_k_for_knn(features, labels)
+        k = check_best_k_for_knn(features, labels)
 
         # print(f"{label}: best k for knn algo is: {k}")
 
-        # criterion = check_best_criterion_for_decision_tree(features, labels)
+        criterion = check_best_criterion_for_decision_tree(features, labels)
         # print(f"{label}: best criterion for decision_tree algo is: {criterion}")
 
         option_nb = best_option_for_naive_bayes(features, labels)
-        print(f"best option for naive_bayes algo is: {option_nb}")
-        continue
+        # print(f"best option for naive_bayes algo is: {option_nb}")
 
         for _ in range(tests_num):
             x_train, x_test, y_train, y_test = split_data(features, labels)
@@ -209,9 +201,8 @@ def run_ml_project():
 
             print(key, "accuracy:", val / tests_num)
 
-            print(
-                f"{max_algo} has the best performances, with {round(max_perf, 2)}% accuracy!")
-        print(f"{max_algo} has the best performances, with {round(100*(max_perf/tests_num), 2)}% accuracy!")
+        print(
+            f"\n{max_algo} has the best performances, with {round(100*(max_perf/tests_num), 2)}% accuracy!")
 
 
 if __name__ == "__main__":
