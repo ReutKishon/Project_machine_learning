@@ -73,7 +73,7 @@ def run_ml_project():
         best_performence_algo = {'knn': 0, 'naive_bayes': 0,
                                  'decision_tree': 0, 'random_forest': 0}
         features, labels = get_features_labels(dh, label)
-        features = select_features(features, labels)
+        features = select_features(features, labels, chi2)
 
         print(f"\nall following results are for {label}")
         k = check_best_k_for_knn(features, labels)

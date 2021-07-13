@@ -12,14 +12,14 @@ from sklearn.impute import KNNImputer
 from sklearn.feature_selection import SelectKBest, chi2
 
 
-def select_features(features, labels):
+def select_features(features, labels, score_func):
     """
     Select features according to the k highest scores.
     :param features: dataframe of fearues
     :param labels: dataframe of labels
     :return: dataframe with the important features only
     """
-    fs = SelectKBest(score_func=chi2, k='all')
+    fs = SelectKBest(score_func=score_func, k='all')
     fs.fit(features, labels)
     per = [ ]
     # for loop to calculate variable importance percentage

@@ -2,13 +2,15 @@ from sklearn import ensemble
 from sklearn.cross_decomposition import PLSRegression
 from sklearn.decomposition import PCA
 from sklearn.ensemble import VotingRegressor, GradientBoostingRegressor, RandomForestRegressor
+from sklearn.feature_selection import f_regression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.tree import DecisionTreeRegressor
 from utils import *
 
-from sklearn.metrics import mean_squared_error as MSE
+from sklearn.metrics import mean_squared_error as MSE, mean_absolute_percentage_error, median_absolute_error, \
+    mean_squared_log_error, mean_absolute_error
 from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
@@ -25,7 +27,7 @@ from sklearn import metrics
 
 def linear_regression(dh, label):
     features, labels = get_features_labels(dh, label)
-    features = select_features(features, labels)
+    features = select_features(features, labels, f_regression)
 
     x_train, x_test, y_train, y_test = split_data(features, labels)
 
@@ -42,7 +44,8 @@ def linear_regression(dh, label):
     plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
     plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
     plt.show()
-    # r2 = LR.score(x_test, y_test)
+    r2 = LR.score(x_test, y_test)
+    print("r2 score = ", r2)
 
 
 def check_dt_reg(dh, label):
@@ -119,7 +122,7 @@ def plot_output(y_pred, y_test, name):
     plt.figure(figsize=(4, 3))
     plt.scatter(y_test, y_pred)
     plt.plot([ 0, 50 ], [ 0, 50 ], '--k')
-    plt.title(type(reg))
+    plt.title(name)
     plt.axis('tight')
     plt.xlabel('True avg_glucose_level ')
     plt.ylabel('Predicted avg_glucose_level ')
@@ -195,6 +198,16 @@ def print_score(y_pred, y_test, name, x_test):
     print(f"median_absolute_error {name}: {median_absolute_error(y_test, y_pred)}")
     print(f"r2 score {name}: {r2_score(y_test, y_pred)}")
     plot_output(y_pred, y_test, name)
+    y_test = np.array(list(y_test))
+    y_pred = np.array(y_pred)
+    df = pd.DataFrame({'Actual': y_test.flatten(),
+                      'Predicted': y_pred.flatten()})
+    df1 = df.head(25)
+    df1.plot(kind='bar', figsize=(16, 10))
+    plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
+    plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+    plt.title("name")
+    plt.show()
     print()
 
 
@@ -205,6 +218,6 @@ def print_score(y_pred, y_test, name, x_test):
 if __name__ == "__main__":
 
     dh = DataHolder()
-    # vote_results(dh)
+    vote_results(dh)
     # check_dt_reg(dh, "avg_glucose_level")
-    linear_regression(dh, "avg_glucose_level")
+    #linear_regression(dh, "avg_glucose_level")
