@@ -9,10 +9,13 @@ from sklearn.tree import DecisionTreeRegressor
 from utils import DataHolder
 from utils import split_data
 from utils import get_features_labels
-from sklearn.metrics import mean_squared_error as MSE
+from sklearn.metrics import mean_squared_error as MSE, mean_absolute_error, mean_squared_error, mean_squared_log_error, \
+    mean_absolute_percentage_error, median_absolute_error, r2_score
 from matplotlib import pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
+from sklearn.metrics import explained_variance_score
+from sklearn.metrics import max_error
 
 
 
@@ -28,7 +31,7 @@ def check_dt_reg(dh, label):
     reg = ensemble.GradientBoostingRegressor(**params)
     reg.fit(x_train, y_train)
     mse = MSE(y_test, reg.predict(x_test))
-    plot_output(mse, reg, x_test, y_test, params)
+    plot_output(reg, x_test, y_test, params)
 
     check_linear_regression( x_test, x_train, y_test, y_train)
 
@@ -39,7 +42,7 @@ def check_dt_reg(dh, label):
     rmse_dt = mse_dt ** (1 / 2)
     print(
         f"accuracy for avg_glucose_level using DecisionTreeRegressor is:{mse_dt}")
-    plot_output(mse_dt, dt, x_test, y_test)
+    plot_output(dt, x_test, y_test)
 
 
     knnr = KNeighborsRegressor()
@@ -83,16 +86,11 @@ def check_linear_regression(x_test, x_train, y_test, y_train):
 
 
 
-def plot_output(mse,  reg, x_test, y_test, params=None):
-    print("The mean squared error (MSE) on test set: {:.4f}".format(mse))
-    if type(reg) == ensemble.GradientBoostingRegressor:
-        y_pred = get_tests_scores(params, reg, x_test, y_test)
-    else:
-        y_pred = reg.predict(x_test)
+def plot_output(y_pred, y_test, name):
     plt.figure(figsize=(4, 3))
     plt.scatter(y_test, y_pred)
     plt.plot([ 0, 50 ], [ 0, 50 ], '--k')
-    plt.title(type(reg))
+    plt.title(name)
     plt.axis('tight')
     plt.xlabel('True avg_glucose_level ')
     plt.ylabel('Predicted avg_glucose_level ')
@@ -110,31 +108,43 @@ def get_tests_scores(params, reg, x_test, y_test):
 
 def vote_results(dh):
     features, labels = get_features_labels(dh,  "avg_glucose_level")
-    X, x_test, y, y_test = split_data(features, labels, 0.03)
+    X, x_test, y, y_test = split_data(features, labels, 0.01)
 
     # Train classifiers
     reg1 = GradientBoostingRegressor(random_state=1)
     reg2 = RandomForestRegressor(random_state=1)
     reg3 = LinearRegression()
 
+    dt = DecisionTreeRegressor(max_depth = 2)
+    dt.fit(X, y)
+    pred_dt = dt.predict(x_test)
+    print_score(pred_dt, y_test, "Decision tree max_depth =2", x_test)
+
     reg1.fit(X, y)
     reg2.fit(X, y)
     reg3.fit(X, y)
 
-    ereg = VotingRegressor([ ('gb', reg1), ('rf', reg2), ('lr', reg3) ])
+    ereg = VotingRegressor([ ('gb', reg1), ('rf', reg2), ('lr', reg3), ('dt', dt) ])
     ereg.fit(X, y)
 
-
     pred1 = reg1.predict(x_test)
+    print_score(pred1, y_test, "gradient boosting", x_test)
     pred2 = reg2.predict(x_test)
+    print_score(pred2, y_test, "random forest", x_test)
+
     pred3 = reg3.predict(x_test)
+    print_score(pred3, y_test, "linear regression", x_test)
+
     pred4 = ereg.predict(x_test)
+    print_score(pred1, y_test, "voting", x_test)
+
 
     plt.figure()
     plt.plot(pred1, 'gd', label='GradientBoostingRegressor')
     plt.plot(pred2, 'b^', label='RandomForestRegressor')
     plt.plot(pred3, 'ys', label='LinearRegression')
     plt.plot(pred4, 'r*', ms=10, label='VotingRegressor')
+    plt.plot(pred_dt, 'p', ms=10, label='DesictionTree')
     plt.plot(y_test.to_numpy(), '.', label= "real value" )
 
     plt.tick_params(axis='x', which='both', bottom=False, top=False,
@@ -146,8 +156,26 @@ def vote_results(dh):
 
     plt.show()
 
+
+def print_score(y_pred, y_test, name, x_test):
+    print(f"{name} explained variannce score: {explained_variance_score(y_test, y_pred)}")
+    print(f"max error {name}:{max_error(y_test, y_pred)} ")
+    print(f"mean abs error {name}:{mean_absolute_error(y_test, y_pred)} ")
+    print(f"mean sqrd error {name}:{mean_squared_error(y_test, y_pred)} ")
+    print(f"mean_squared_log_error {name}: {mean_squared_log_error(y_test, y_pred)}")
+    print(f"mean_absolute_percentage_error {name}: {mean_absolute_percentage_error(y_test, y_pred)}")
+    print(f"median_absolute_error {name}: {median_absolute_error(y_test, y_pred)}")
+    print(f"r2 score {name}: {r2_score(y_test, y_pred)}")
+    plot_output(y_pred, y_test, name)
+    print()
+
+
+
+
+
 if __name__ == "__main__":
 
     dh = DataHolder()
     vote_results(dh)
-    check_dt_reg(dh, "avg_glucose_level")
+    #check_dt_reg(dh, "avg_glucose_level")
+
