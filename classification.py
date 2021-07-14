@@ -2,6 +2,8 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB, MultinomialNB
 from sklearn import metrics
+from sklearn.svm import SVC
+
 from utils import *
 import matplotlib.pyplot as plt
 from sklearn.tree import DecisionTreeClassifier
@@ -40,6 +42,17 @@ def check_decision_tree(x_train, y_train, x_test, y_test):
 
     return accuracy
 
+def check_svm(x_train, y_train, x_test, y_test):
+    #create svm model
+    svm = SVC()
+    # Train the model using the training sets
+    svm.fit(x_train, y_train)
+
+    # prediction on test set
+    y_pred = svm.predict(x_test)
+    accuracy_score = metrics.accuracy_score(y_test, y_pred)
+
+    return accuracy_score
 
 def check_random_forest(x_train, y_train, x_test, y_test):
 
@@ -70,7 +83,7 @@ def run_ml_project():
     dh = DataHolder()
 
     for label in ["hypertension", "heart_disease", "stroke"]:
-        best_performence_algo = {'knn': 0, 'naive_bayes': 0,
+        best_performence_algo = {'knn': 0, 'naive_bayes': 0, "svm":0,
                                  'decision_tree': 0, 'random_forest': 0}
         features, labels = get_features_labels(dh, label)
         features = select_features(features, labels, chi2)
@@ -83,6 +96,8 @@ def run_ml_project():
 
             best_performence_algo['knn'] += check_knn(
                 x_train, y_train, x_test, y_test, 13)
+            best_performence_algo [ 'svm' ] += check_svm(
+                x_train, y_train, x_test, y_test)
             best_performence_algo['naive_bayes'] += check_naive_bayes(
                 x_train, y_train, x_test, y_test)
             best_performence_algo['decision_tree'] += check_decision_tree(

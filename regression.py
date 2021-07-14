@@ -1,5 +1,6 @@
 import csv
 from sklearn.ensemble import GradientBoostingRegressor, RandomForestRegressor
+from sklearn.feature_selection import f_regression
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.tree import DecisionTreeRegressor
 from utils import *
@@ -177,6 +178,7 @@ if __name__ == "__main__":
     create_csv_file()
     dh = DataHolder()
     features, labels = get_features_labels(dh, "avg_glucose_level")
+    features = select_features(features, labels, f_regression)
     x_train, x_test, y_train, y_test = split_data(features, labels)
 
     results_in_excel_file(x_train, x_test, y_train, y_test)
