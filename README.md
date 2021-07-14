@@ -1,7 +1,7 @@
 #  machine learning project
 
 Dataset description: 
-The dataset contains medical information about patients, like gender, age, various diseases, and smoking status.  Each row in the data provides relevant attributes about the patient.
+The dataset contains medical information about patients, like gender, age, various diseases, and smoking status.                                          Each row in the data provides relevant attributes about the patient.
 Dataset source: https://www.kaggle.com/fedesoriano/stroke-prediction-dataset
 
 Our questions:
@@ -20,9 +20,14 @@ We took care of a few things:
 
 techniques we use:
 <a href=https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm>k-Nearest-Neighbor</a>
-Naive Bayes
-Random Forest
-decision tree algorithm
+
+<a href=https://en.wikipedia.org/wiki/Naive_Bayes_classifier>Naive Bayes</a>
+
+<a href=https://en.wikipedia.org/wiki/Random_forest>Random Forest</a>
+
+<a href=https://en.wikipedia.org/wiki/Decision_tree_learning>decision tree algorithm</a>
+
+
   
 
  
