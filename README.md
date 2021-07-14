@@ -72,6 +72,20 @@ In Naive Bayes: we used the multinomial Naive Bayes classifier that suits our da
 <img src="/images/classification_algorithms_results.jpeg" height="250" width="350" >
 
 
+As we can see, all of the algorithms have similar accuracy.
+
+# Predicting glucose level
+
+Knn Regressor:
+
+We choose the best hyperparameter k which will give the best result.
+
+We measure the error rate of the algorithm with each K using Root Mean Square Error (RMSE).
+k=71 will give us the best result in this case.
+
+In the random forest and the decision tree algorithms we choose max_depth = 4. (as we explained above)
+
+running all the algorithms on the same training set and test set:
 
 
 
