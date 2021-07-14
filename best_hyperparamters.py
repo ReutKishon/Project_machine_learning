@@ -2,6 +2,7 @@ from utils import *
 from classification import *
 
 
+
 # searching for the best k for knn algo
 def check_best_k_for_knn(features, labels):
     options_for_k = {k: 0 for k in range(1, 73, 2)}
@@ -90,12 +91,12 @@ if __name__ == "__main__":
     dh = DataHolder()
 
     for label in ["hypertension", "heart_disease", "stroke"]:
+
         features, labels = get_features_labels(dh, label)
-        features = select_features(features, labels)
+        # features = select_features(features, labels)
 
         print(f"\nall following results are for {label}")
         best_max_depth_for_decision_tree(features, labels)
-        
 
         k = check_best_k_for_knn(features, labels)
         print(f"best k for knn algo is: {k}")
