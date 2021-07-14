@@ -69,7 +69,7 @@ And used with max_depth = 4.
 In Naive Bayes: we used the multinomial Naive Bayes classifier that suits our data.
 
 
-<img src="/images/classification_algorithms_results.jpeg" height="250" width="350" >
+<img src="/images/classification_algorithms _results.jpeg" alt="classification_algorithms_results" height="250" width="350" >
 
 
 As we can see, all of the algorithms have similar accuracy.
