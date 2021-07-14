@@ -19,7 +19,7 @@ We took care of a few things:
 * Normalization of data set
 
 techniques we use:
-k-Nearest-Neighbor
+<a href=https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm>k-Nearest-Neighbor</a>
 Naive Bayes
 Random Forest
 decision tree algorithm
