@@ -24,7 +24,7 @@ import pandas as pd
 """
 
 
-def plot_columns_graph_output(y_test, y_pred):
+def plot_columns_graph_output(y_test, y_pred, name):
     y_test = np.array(list(y_test))
     y_pred = np.array(y_pred)
     df = pd.DataFrame({'Actual': y_test.flatten(),
@@ -34,6 +34,8 @@ def plot_columns_graph_output(y_test, y_pred):
     df1.plot(kind='bar', figsize=(16, 10))
     plt.grid(which='major', linestyle='-', linewidth='0.5', color='green')
     plt.grid(which='minor', linestyle=':', linewidth='0.5', color='black')
+    plt.title(name)
+
     plt.show()
 
 
@@ -139,11 +141,20 @@ def results_in_excel_file(x_train, x_test, y_train, y_test):
     lr_pred = linear_regression(x_train, x_test, y_train)
     dt_pred = decision_tree_regressor(x_train, x_test, y_train)
     rf_pred = random_forest_regressor(x_train, x_test, y_train)
-    insert_row_in_excel("Knn", y_test, knn_pred)
-    insert_row_in_excel("linear regression", y_test, lr_pred)
-    insert_row_in_excel("decision tree", y_test, dt_pred)
-    insert_row_in_excel("random forest", y_test, rf_pred)
+    insert_row_into_excel("Knn", y_test, knn_pred)
+    insert_row_into_excel("linear regression", y_test, lr_pred)
+    insert_row_into_excel("decision tree", y_test, dt_pred)
+    insert_row_into_excel("random forest", y_test, rf_pred)
 
+    # plot_output(knn_pred, y_test, "Knn")
+    # plot_output(lr_pred, y_test, "Linear regression")
+    # plot_output(dt_pred, y_test, "Decision tree")
+    # plot_output(rf_pred, y_test, "Random forest")
+
+    plot_columns_graph_output(y_test, knn_pred, "Knn")
+    plot_columns_graph_output(y_test, lr_pred, "Linear regression")
+    plot_columns_graph_output(y_test, dt_pred, "Decision tree")
+    plot_columns_graph_output(y_test, rf_pred, "Random forest")
 
 # def print_score(y_pred, y_test, name, x_test):
 
@@ -168,4 +179,4 @@ if __name__ == "__main__":
     features, labels = get_features_labels(dh, "avg_glucose_level")
     x_train, x_test, y_train, y_test = split_data(features, labels)
 
-    result_in_excel_file(x_train, x_test, y_train, y_test)
+    results_in_excel_file(x_train, x_test, y_train, y_test)
