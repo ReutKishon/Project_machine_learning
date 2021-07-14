@@ -25,10 +25,10 @@ def check_knn(x_train, y_train, x_test, y_test, k):
     return acc_score
 
 
-def check_decision_tree(x_train, y_train, x_test, y_test, max_depth):
+def check_decision_tree(x_train, y_train, x_test, y_test):
 
-    # instantiate the DecisionTreeClassifier model with criterion
-    clf = DecisionTreeClassifier(max_depth=max_depth)
+    # instantiate the DecisionTreeClassifier model with max_depth = 4
+    clf = DecisionTreeClassifier(max_depth=4)
 
     # Train Decision Tree Classifer
     clf.fit(x_train, y_train)
@@ -44,9 +44,9 @@ def check_decision_tree(x_train, y_train, x_test, y_test, max_depth):
 def check_random_forest(x_train, y_train, x_test, y_test):
 
     # Create a Gaussian Classifier
-    clf = RandomForestClassifier(n_estimators=100)
+    clf = RandomForestClassifier(max_depth=4)
 
-    # Train the model using the training sets y_pred=clf.predict(X_test)
+    # Train the model using the training sets
     clf.fit(x_train, y_train)
 
     # prediction on test set
@@ -56,9 +56,9 @@ def check_random_forest(x_train, y_train, x_test, y_test):
     return accuracy_score
 
 
-def check_naive_bayes(x_train, y_train, x_test, y_test, option):
+def check_naive_bayes(x_train, y_train, x_test, y_test):
 
-    clf = GaussianNB() if (option == 'GaussianNB') else MultinomialNB()
+    clf = MultinomialNB()
     y_pred = clf.fit(x_train, y_train).predict(x_test)
     accuracy_score = metrics.accuracy_score(y_test, y_pred)
 
@@ -84,9 +84,9 @@ def run_ml_project():
             best_performence_algo['knn'] += check_knn(
                 x_train, y_train, x_test, y_test, 13)
             best_performence_algo['naive_bayes'] += check_naive_bayes(
-                x_train, y_train, x_test, y_test, 'multinomialNB')
+                x_train, y_train, x_test, y_test)
             best_performence_algo['decision_tree'] += check_decision_tree(
-                x_train, y_train, x_test, y_test, 4)
+                x_train, y_train, x_test, y_test)
             best_performence_algo['random_forest'] += check_random_forest(
                 x_train, y_train, x_test, y_test)
 
