@@ -29,7 +29,7 @@ We took care of a few things:
 
 <a href=https://en.wikipedia.org/wiki/Random_forest>Random Forest</a>
 
-<a href=https://en.wikipedia.org/wiki/Decision_tree_learning>decision tree algorithm</a>
+<a href=https://en.wikipedia.org/wiki/Decision_tree_learning>Decision tree algorithm</a>
 
 
 # results:
