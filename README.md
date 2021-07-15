@@ -75,6 +75,8 @@ In Naive Bayes: we used the multinomial Naive Bayes classifier that suits our da
 As we can see, all of the algorithms have similar accuracy.
 
 # Predicting glucose level
+DISCLAIMER:
+Unfourtantely we did not manage to find good regression model that will be good enough for predicting the glucose level. even though, we bring here a short summary of the results of the tests that we tried.
 
 Knn Regressor:
 
@@ -86,6 +88,13 @@ k=71 will give us the best result in this case.
 In the random forest and the decision tree algorithms we choose max_depth = 4. (as we explained above)
 
 running all the algorithms on the same training set and test set:
+ |algorithm        |explained_variance_score|max_error         |mean_absolute_error|mean_squared_error|mean_squared_log_error|mean_absolute_percentage_error|median_absolute_error|r2                 |
+|-----------------|------------------------|------------------|-------------------|------------------|----------------------|------------------------------|---------------------|-------------------|
+|Knn              |0.08644817188435305     |174.96846153846153|32.2110813771518   |1874.7397262643556|0.12227214799280926   |0.3035689361271416            |24.1413076923077     |0.08616970234906707|
+|linear regression|0.08264879160517558     |166.1676191238422 |32.70888211352479  |1882.411888555488 |0.12472806843967049   |0.3128261155558476            |25.16249122909972    |0.08242995423795063|
+|decision tree    |0.08426725119997935     |169.20203703703703|32.64331939670012  |1879.1715504712588|0.1244036191842194    |0.31207819226471717           |25.13110265313383    |0.08400943701868913|
+|random forest    |0.10108666805874822     |160.3477771373162 |32.48402530968287  |1844.4411169822088|0.12216998836340097   |0.3102875885993339            |25.09986139892957    |0.10093857226248404|
+
 
 
 
